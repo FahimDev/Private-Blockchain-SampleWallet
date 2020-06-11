@@ -41,7 +41,7 @@ class FabCar extends Contract {
                 color: 'black',
                 make: 'Tesla',
                 model: 'S',
-                owner: 'Adriana',
+                owner: 'Sulekha',
             },
             {
                 color: 'purple',
@@ -71,7 +71,7 @@ class FabCar extends Contract {
                 color: 'brown',
                 make: 'Holden',
                 model: 'Barina',
-                owner: 'Shotaro',
+                owner: 'Nur',
             },
         ];
 
@@ -90,6 +90,12 @@ class FabCar extends Contract {
         }
         console.log(carAsBytes.toString());
         return carAsBytes.toString();
+    }
+    
+    async queryDingDong(ctx) {
+    
+        console.log("trustMe");
+        return "HelloWorld";
     }
 
     async createCar(ctx, carNumber, make, model, color, owner) {
