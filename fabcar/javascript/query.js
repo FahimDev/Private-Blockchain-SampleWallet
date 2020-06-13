@@ -5,13 +5,14 @@
  */
 
 'use strict';
-
+const query = main;
+module.exports = query;
 const { Gateway, Wallets } = require('fabric-network');
 const path = require('path');
 const fs = require('fs');
 
 
-async function main() {
+async function main(query) {
     try {
         // load the network configuration
         const ccpPath = path.resolve(__dirname, '..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
@@ -40,17 +41,57 @@ async function main() {
         // Get the contract from the network.
         const contract = network.getContract('fabcar');
 
-        // Evaluate the specified transaction.
-        // queryCar transaction - requires 1 argument, ex: ('queryCar', 'CAR4')
-        const result = await contract.evaluateTransaction('queryCar', 'CAR12')
-        // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
         //const result = await contract.evaluateTransaction('queryAllCars');
+        
+        if(query == 'all')
+            {
+                // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
+                const result = await contract.evaluateTransaction('queryAllCars');
+                //console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+                const info = JSON.parse(result.toString());
+
+                info.forEach(element => {
+                console.log('#############################'+element.Key+'#############################');
+                console.log('-----------------------Vehicle  Details-----------------------');
+                console.log('Brand: '+element.Record.make);
+                console.log('Model: '+element.Record.model);
+                console.log('Color: '+element.Record.color);
+                console.log('Owner: '+element.Record.owner);
+                console.log('Registration Number: '+element.Record.regNum);
+                console.log('-------------------------------------------------------------');
+                console.log('Chassis ID: '+element.Record.bodyNum);
+                console.log('Engine ID: '+element.Record.engNum);
+                console.log('##############################################################');
+                });
+            }
+        else
+            {
+                // Evaluate the specified transaction.
+                // queryCar transaction - requires 1 argument, ex: ('queryCar', 'CAR4')
+                console.log(query);
+                const result = await contract.evaluateTransaction('queryCar', query);
+
+                const info = JSON.parse(result.toString());
+                console.log('##############################################################');
+                console.log('-----------------------Vehicle  Details-----------------------');
+                console.log('Brand: '+info.make);
+                console.log('Model: '+info.model);
+                console.log('Color: '+info.color);
+                console.log('Owner: '+info.owner);
+                console.log('Registration Number: '+info.regNum);
+                console.log('-------------------------------------------------------------');
+                console.log('Chassis ID: '+info.bodyNum);
+                console.log('Engine ID: '+info.engNum);
+                console.log('##############################################################');
+
+                //console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+            }
+            
+
+
         //const result = await contract.evaluateTransaction('queryDingDong');
         
-        //console.log(network);//trying to find path
-
-        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-
+        //console.log(network);//trying to find path     
         // Disconnect from the gateway.
         await gateway.disconnect();
         
@@ -59,5 +100,4 @@ async function main() {
         process.exit(1);
     }
 }
-
-main();
+//main();
