@@ -84,7 +84,7 @@ async function main(query) {
                 console.log('Engine ID: '+info.engNum);
                 console.log('##############################################################');
 
-                //console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+                console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
             }
             
 

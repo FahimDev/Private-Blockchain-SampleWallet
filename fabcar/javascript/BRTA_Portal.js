@@ -55,7 +55,12 @@ rl.on('line',(userInput) => {
         }
         else if(values[0] == '3'){
             console.log('Investigating....');
-            console.log('stolen engine');
+            if(values[1] != null){
+                invoke(values);
+            }
+            else{
+                console.log('[Example:3 CARX newEngine] *press Enter*');
+            }
         }
         else if(values[0] == '4'){
             console.log('add vehicle');
@@ -93,10 +98,10 @@ rl.on('line',(userInput) => {
             console.log('Change Engine Serial Number:');
 
             if(values[1] != null){
-                console.log(values[1]);
+                invoke(values);
             }
             else{
-                console.log('[Example:7 INZ-BXXXX] *press Enter*');
+                console.log('[Example:7 CARX INZ-BXXXX] *press Enter*');
             }
 
         }

@@ -100,18 +100,46 @@ async function main(query) {
         console.log('Updated Information: [Vehicle Color] ' + car2.color);
         //-------------end: ChangeCarColor------------
     }
-    else if(query[0] == '3')
-    {    
-        //-------------start: ChangeCarEng------------
-        const previousInfo = await contract.evaluateTransaction('queryCar', query[1])
-        console.log('Previous Information: ' + previousInfo);
-        // changeCarOwner transaction - requires 2 args , ex: ('changeCarOwner', 'CAR12', 'Dave')
-        await contract.submitTransaction('changeCarEng', query[1], query[2]);
-        console.log('Change has been submitted. Engine number of '+query[1]+' has been changed' );
+    else if(query[0] == '7')
+    {   
+        //------------start: CheckEveryEngine-------- 
+        var otherEngine = 'INZ-BXXXX';
+        var otherCar = 'CARX';
+        var found = '0';
+        // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
+        const result = await contract.evaluateTransaction('queryAllCars');
+        //console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+        const info = JSON.parse(result.toString());
+        info.forEach(element => {            
+            otherEngine = element.Record.engNum;
+            if(query[2] == otherEngine){
+                found = '1';
+                otherCar = element.Key;
+                console.log('Engine Found!');
+            }
+        });
+        //------------end: CheckEveryEngine--------     
+        
+        if(found == '0'){
+            
+            //-------------start: ChangeCarEng------------
+            const previousInfo = await contract.evaluateTransaction('queryCar', query[1])
+            const car1 = JSON.parse(previousInfo.toString());
+            // changeCarOwner transaction - requires 2 args , ex: ('changeCarOwner', 'CAR12', 'Dave')
+            await contract.submitTransaction('changeCarEng', query[1], query[2]);
+            console.log('Change has been submitted. Engine number of '+query[1]+' has been changed' );
 
-        const updatedInfo = await contract.evaluateTransaction('queryCar', query[1])
-        console.log('Updated Information: ' + updatedInfo);
-        //-------------end: ChangeCarEng------------
+            const updatedInfo = await contract.evaluateTransaction('queryCar', query[1])
+            const car2 = JSON.parse(updatedInfo.toString());
+            console.log('Previous Information: [Vehicle Engine] ' + car1.engNum);
+            console.log('Updated Information: [Vehicle Engine] ' + car2.engNum);
+            //-------------end: ChangeCarEng------------
+
+        }
+        else{
+            console.log('This Engine belongs to '+otherCar+' vehicle.Please try again.');
+        }
+        
     }
 
         // Disconnect from the gateway.

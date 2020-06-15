@@ -220,6 +220,21 @@ class FabCar extends Contract {
         await ctx.stub.putState(carNumber, Buffer.from(JSON.stringify(car)));
         console.info('============= END : changeCarColor ===========');
     }
+
+    async changeCarEng(ctx, carNumber, newEng) {
+        console.info('============= START : changeCarEng ===========');
+
+        const carAsBytes = await ctx.stub.getState(carNumber); // get the car from chaincode state
+        if (!carAsBytes || carAsBytes.length === 0) {
+            throw new Error(`${carNumber} does not exist`);
+        }
+        const car = JSON.parse(carAsBytes.toString());
+        car.engNum = newEng;
+
+        await ctx.stub.putState(carNumber, Buffer.from(JSON.stringify(car)));
+        console.info('============= END : changeCarEng ===========');
+    }
+    /*
     async changeCarEng(ctx, carNumber, newEng) {
         console.info('============= START : changeCarEngine ===========');
 
@@ -227,37 +242,100 @@ class FabCar extends Contract {
         if (!carAsBytes || carAsBytes.length === 0) {
             throw new Error(`${carNumber} does not exist`);
         }
-        const car = JSON.parse(carAsBytes.toString());
-
         //--------------Start : CheckEveryEngine--------------
-        found = 1;
-            for(i=0;i<=12;i++)
+        var found = '1';
+        var i = 0;
+            for(i=0;i<12;i++)
             {
                 cars = "CAR"+i;
+                console.log('Cars ID: '+ cars);
                 const carAsBytes = await ctx.stub.getState(cars); // get the car from chaincode state
                 const otherCar = JSON.parse(carAsBytes.toString());
 
-                if(car.engNum != otherCar.engNum)
+                if(newEng == otherCar.engNum)
                 {
-                    found = 0;
+                    found = '1';
+                    console.log('Found value Changed to 1');
                 }
                 else 
                 {
-                    found = 1; 
+                    found = '0'; 
+                    console.log('Found value Changed to 0');
                 }
             }      
-                if( found == 0)
-                {
-                    car.engNum = newEng;
-                    await ctx.stub.putState(carNumber, Buffer.from(JSON.stringify(car)));
-                }
-                else{
-                    throw new Error(`${car.engNum} This Engine belongs to the car number : ${cars}. Please check the Engine`);
-                }    
+            if(found == '0')
+            {
+                console.log('Found value is 0');
+                const carAsBytes = await ctx.stub.getState(carNumber);
+                const car = JSON.parse(carAsBytes.toString());
+                car.engNum = newEng;
+                await ctx.stub.putState(carNumber, Buffer.from(JSON.stringify(car)));
+            }
+            else
+            {
+                console.log('Found value is 1');
+                throw new Error(`${car.engNum} This Engine belongs to the car number : ${cars}. Please check the Engine`);
+            }    
             //--------------End : CheckEveryEngine--------------
 
         console.info('============= END : changeCarEngine ===========');
     }
+    */
+    /*
+    async changeEng(ctx, carNumber, newEng) {
+        console.info('============= START : changeEngineTEST ===========');
+
+        const carAsBytes = await ctx.stub.getState(carNumber); // get the car from chaincode state
+        if (!carAsBytes || carAsBytes.length === 0) {
+            throw new Error(`${carNumber} does not exist`);
+        }
+        //--------------Start : CheckEveryEngine--------------
+        var found = '0';
+            //GET ALL
+                const startKey = 'CAR0';
+                const endKey = 'CAR999';
+                const allResults = [];
+                for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
+                    const strValue = Buffer.from(value).toString('utf8');
+                    let record;
+                    try {
+                        record = JSON.parse(strValue);
+                    } catch (err) {
+                        console.log(err);
+                        record = strValue;
+                    }
+                    allResults.push({ Key: key, Record: record });
+                }
+                console.info(allResults);
+                console.log(allResults);
+
+                const info = JSON.parse(allResults.toString());
+                info.forEach(element => {
+                var otherEng = element.Record.engNum;
+                    if(newEng == otherEng){
+                        found = '1';
+                    }
+                });
+
+            //GET ALL
+            if(found == '0')
+            {
+                console.log('Found value is 0');
+                const carAsBytes = await ctx.stub.getState(carNumber); 
+                const car = JSON.parse(carAsBytes.toString());
+                car.engNum = newEng;
+                await ctx.stub.putState(carNumber, Buffer.from(JSON.stringify(car)));
+            }
+            else
+            {
+                console.log('Found value is 1');
+                //throw new Error(`${car.engNum} This Engine belongs to the car number : ${cars}. Please check the Engine`);
+            }    
+            //--------------End : CheckEveryEngine--------------
+
+        console.info('============= END : changeEngineTEST ===========');
+    }
+    */
     /*
     async changeCarReg(ctx, carNumber, newCarNumber) {
         console.info('============= START : changeCarRegistrationNumber ===========');

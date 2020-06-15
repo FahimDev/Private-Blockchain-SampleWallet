@@ -55,7 +55,7 @@ rl.on('line',(userInput) => {
         }
         else if(values[0] == '3'){
             console.log('Investigating....');
-            console.log('stolen engine');
+            //console.log('stolen engine');
 
             if(values[1] != null){
                 invoke(values);
